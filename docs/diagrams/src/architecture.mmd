@@ -1,0 +1,55 @@
+flowchart LR
+    subgraph Clients["Clients"]
+        M["Officer Mobile App"]
+        W["Planner / Supervisor Web"]
+    end
+
+    subgraph Security["Security & API Gateway"]
+        GW["Spring Security JWT Auth Filter<br/>RBAC: OFFICER | PLANNER | SUPERVISOR"]
+    end
+
+    subgraph Modules["Core Modules (Modular Monolith)"]
+        AUTH["auth module<br/>User, Station, TokenBlacklist"]
+        OPS["operations module<br/>Patrol, Waypoint, Assignment, Bandobast"]
+        TRK["tracking module<br/>Ping Ingest, Rate Limiter, Persist Worker"]
+        ALR["alert module<br/>GeofenceRule, NoSignalSweeper, SOS"]
+        RPT["report module<br/>OpenPDF Report Generation"]
+        AUD["audit module<br/>AuditLog Service"]
+    end
+
+    subgraph Storage["Persistence & Caching"]
+        PG[("PostgreSQL 16<br/>Relational & Audit Store")]
+        RD[("Redis 7<br/>GEO, ZSET, Pub/Sub, Blacklist")]
+    end
+
+    subgraph RealTime["Real-Time Gateway"]
+        WS["WebSocket STOMP Broker<br/>/topic/patrol/{id}"]
+    end
+
+    M & W --> GW
+    GW --> AUTH
+    GW --> OPS
+    GW --> TRK
+    GW --> ALR
+    GW --> RPT
+
+    AUTH --> RD
+    AUTH --> PG
+
+    OPS --> PG
+    OPS --> AUD
+    OPS -- "Domain Events" --> ALR
+
+    TRK --> RD
+    TRK --> PG
+    TRK -- "PingReceivedEvent" --> ALR
+
+    ALR --> PG
+    ALR --> RD
+    ALR --> AUD
+
+    RPT --> PG
+
+    RD -- "Redis Pub/Sub" --> WS
+    WS --> W
+

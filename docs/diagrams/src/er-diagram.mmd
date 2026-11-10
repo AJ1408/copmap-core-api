@@ -1,0 +1,131 @@
+erDiagram
+    stations ||--o{ users : "employs"
+    stations ||--o{ patrols : "hosts"
+    stations ||--o{ bandobast_operations : "coordinates"
+
+    users ||--o{ patrols : "creates/closes"
+    users ||--o{ assignments : "assigned_to"
+    users ||--o{ alerts : "triggers/acknowledges"
+    users ||--o{ audit_logs : "acts"
+
+    patrols ||--o{ patrol_waypoints : "contains"
+    patrols ||--o{ assignments : "staffs"
+    patrols ||--o{ location_pings : "records"
+    patrols ||--o{ alerts : "generates"
+
+    bandobast_operations ||--o{ bandobast_points : "contains"
+    bandobast_operations ||--o{ assignments : "staffs"
+
+    stations {
+        bigint id PK
+        varchar name
+        varchar district
+    }
+
+    users {
+        bigint id PK
+        varchar badge_no UK
+        varchar full_name
+        varchar rank
+        varchar role
+        bigint station_id FK
+        varchar password_hash
+        boolean active
+    }
+
+    patrols {
+        bigint id PK
+        varchar title
+        varchar type
+        bigint station_id FK
+        varchar status
+        timestamptz shift_start
+        timestamptz shift_end
+        int geofence_radius_m
+        bigint created_by FK
+        bigint closed_by FK
+        text close_remarks
+        timestamptz created_at
+    }
+
+    patrol_waypoints {
+        bigint id PK
+        bigint patrol_id FK
+        int seq
+        varchar name
+        double_precision lat
+        double_precision lng
+    }
+
+    bandobast_operations {
+        bigint id PK
+        varchar title
+        varchar kind
+        bigint station_id FK
+        varchar status
+        timestamptz starts_at
+        timestamptz ends_at
+        bigint commander_id FK
+    }
+
+    bandobast_points {
+        bigint id PK
+        bigint operation_id FK
+        varchar name
+        double_precision lat
+        double_precision lng
+        int radius_m
+        int required_strength
+    }
+
+    assignments {
+        bigint id PK
+        bigint officer_id FK
+        varchar operation_type
+        bigint operation_id
+        bigint point_id
+        timestamptz starts_at
+        timestamptz ends_at
+        varchar status
+        timestamptz started_at
+        timestamptz ended_at
+    }
+
+    location_pings {
+        bigint id PK
+        bigint officer_id
+        bigint patrol_id
+        double_precision lat
+        double_precision lng
+        real accuracy_m
+        real speed_mps
+        timestamptz recorded_at
+        timestamptz received_at
+    }
+
+    alerts {
+        bigint id PK
+        varchar type
+        varchar severity
+        varchar operation_type
+        bigint operation_id
+        bigint officer_id
+        text message
+        double_precision lat
+        double_precision lng
+        varchar status
+        bigint acked_by
+        timestamptz acked_at
+        timestamptz created_at
+    }
+
+    audit_logs {
+        bigint id PK
+        bigint actor_id
+        varchar action
+        varchar entity_type
+        bigint entity_id
+        jsonb details
+        timestamptz created_at
+    }
+

@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> DRAFT : POST /api/v1/patrols (Create draft)
+    DRAFT --> PLANNED : POST /api/v1/patrols/{id}/publish (Ready for assignment)
+    DRAFT --> CANCELLED : Cancel patrol
+    PLANNED --> ACTIVE : POST /api/v1/patrols/{id}/duty/start (First officer starts duty)
+    PLANNED --> CANCELLED : Cancel patrol
+    ACTIVE --> COMPLETED : POST /api/v1/patrols/{id}/close (Planner closes with remarks)
+    COMPLETED --> [*]
+    CANCELLED --> [*]
+

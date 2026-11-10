@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16:///copmap-test
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+app:
+  jwt:
+    secret: a-very-secret-test-key-of-at-least-32-chars-long-12345
+    access-ttl-minutes: 15
+  tracking:
+    max-pings-per-minute: 30
+    no-signal-minutes: 3
+  alerts:
+    dedupe-ttl-minutes: 10
+

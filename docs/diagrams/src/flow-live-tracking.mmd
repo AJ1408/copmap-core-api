@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor Officer as Field Officer (Mobile)
+    participant Tracking as TrackingController
+    participant Limiter as PingRateLimiter
+    participant Redis as Redis (GEO & ZSET)
+    participant AsyncPersist as PingPersistenceWorker
+    participant DB as PostgreSQL
+    participant Rule as GeofenceRule
+    participant Alert as AlertService
+    actor Supervisor as Control Room (STOMP WS)
+
+    Officer->>Tracking: POST /api/v1/tracking/pings (Batch JSON)
+    Tracking->>Limiter: checkRateLimit(officerId)
+    alt Rate Limit Exceeded
+        Limiter-->>Tracking: throw RateLimitException
+        Tracking-->>Officer: 429 Too Many Requests
+    else Rate Limit OK
+        Tracking->>Redis: GEOADD live:patrol:{id}<br/>ZADD lastseen:patrol:{id}
+        Tracking->>Redis: PUBLISH chan:patrol:{id} (POSITION payload)
+        Redis-->>Supervisor: WebSocket STOMP /topic/patrol/{id}
+        Tracking->>AsyncPersist: persistAsync(pings)
+        AsyncPersist->>DB: Batch INSERT location_pings (ON CONFLICT DO NOTHING)
+        Tracking->>Rule: publishEvent(PingReceivedEvent)
+        opt Officer Outside Geofence Radius
+            Rule->>Alert: raiseDeduped(GEOFENCE_BREACH)
+            Alert->>Redis: SETNX alert:dedupe:{patrolId}:{type}:{officerId}
+            Alert->>DB: INSERT alerts
+            Alert->>Redis: PUBLISH chan:patrol:{id} (ALERT payload)
+            Redis-->>Supervisor: WebSocket STOMP /topic/patrol/{id}
+        end
+        Tracking-->>Officer: 200 OK (Processed count)
+    end
+

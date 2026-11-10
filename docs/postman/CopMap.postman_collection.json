@@ -1,0 +1,782 @@
+{
+  "info": {
+    "name": "CopMap API",
+    "_postman_id": "c1f7b8d0-copmap-backend-collection",
+    "description": "Comprehensive Postman collection for CopMap Backend covering Authentication, Patrols, Assignments, Tracking, Alerts, PDF Reports, and Bandobast stubs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. Auth",
+      "item": [
+        {
+          "name": "Login - Planner (PLN001)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "    pm.environment.set('token', res.data.accessToken);",
+                  "    pm.environment.set('planner_token', res.data.accessToken);",
+                  "}",
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Has access token', function () { pm.expect(res.data.accessToken).to.be.a('string'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"badgeNo\": \"PLN001\",\n  \"password\": \"Copmap@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Supervisor (SUP001)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "    pm.environment.set('supervisor_token', res.data.accessToken);",
+                  "}",
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"badgeNo\": \"SUP001\",\n  \"password\": \"Copmap@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Officer (OFF001)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "    pm.environment.set('officer_token', res.data.accessToken);",
+                  "}",
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"badgeNo\": \"OFF001\",\n  \"password\": \"Copmap@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Patrols",
+      "item": [
+        {
+          "name": "Create Patrol (Planner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "    pm.environment.set('patrol_id', res.data.id);",
+                  "}",
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Connaught Place Night Patrol\",\n  \"type\": \"FOOT\",\n  \"stationId\": 1,\n  \"shiftStart\": \"2026-11-10T20:00:00Z\",\n  \"shiftEnd\": \"2026-11-11T04:00:00Z\",\n  \"geofenceRadiusM\": 200,\n  \"waypoints\": [\n    {\n      \"seq\": 1,\n      \"name\": \"Inner Circle Block A\",\n      \"lat\": 28.6328,\n      \"lng\": 77.2197\n    },\n    {\n      \"seq\": 2,\n      \"name\": \"Inner Circle Block D\",\n      \"lat\": 28.6315,\n      \"lng\": 77.2212\n    },\n    {\n      \"seq\": 3,\n      \"name\": \"Palika Bazar Entry\",\n      \"lat\": 28.6304,\n      \"lng\": 77.2185\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Patrols",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Patrol By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publish Patrol (Planner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "publish"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assign Officers (Supervisor/Planner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"officerIds\": [3, 4],\n  \"startsAt\": \"2026-11-10T20:00:00Z\",\n  \"endsAt\": \"2026-11-11T04:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Assignments (Officer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/me/assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "assignments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Start Duty (Officer OFF001)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "start"
+              ]
+            }
+          }
+        },
+        {
+          "name": "End Duty (Officer OFF001)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/end",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "end"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Close Patrol (Planner/Supervisor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"remarks\": \"Shift completed successfully with 0 incidents.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/close",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "close"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download Patrol PDF Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/report.pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "report.pdf"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Tracking & Live Position",
+      "item": [
+        {
+          "name": "Ingest Ping Batch (Officer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patrolId\": {{patrol_id}},\n  \"pings\": [\n    {\n      \"lat\": 28.6328,\n      \"lng\": 77.2197,\n      \"accuracy\": 5.0,\n      \"speed\": 1.2,\n      \"recordedAt\": \"2026-11-10T20:05:00Z\"\n    },\n    {\n      \"lat\": 28.6320,\n      \"lng\": 77.2205,\n      \"accuracy\": 4.5,\n      \"speed\": 1.4,\n      \"recordedAt\": \"2026-11-10T20:06:00Z\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "locations"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Patrol Live Positions Snapshot",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/patrols/{{patrol_id}}/live",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patrols",
+                "{{patrol_id}}",
+                "live"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Alerts",
+      "item": [
+        {
+          "name": "Trigger SOS (Officer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "    pm.environment.set('alert_id', res.data.id);",
+                  "}",
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patrolId\": {{patrol_id}},\n  \"lat\": 28.6328,\n  \"lng\": 77.2197,\n  \"message\": \"Urgent backup needed at Inner Circle Block A\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/alerts/sos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "alerts",
+                "sos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/alerts?patrolId={{patrol_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "alerts"
+              ],
+              "query": [
+                {
+                  "key": "patrolId",
+                  "value": "{{patrol_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Acknowledge Alert (Supervisor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{supervisor_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/alerts/{{alert_id}}/ack",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "alerts",
+                "{{alert_id}}",
+                "ack"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Audit",
+      "item": [
+        {
+          "name": "Get Audit Trail For Patrol",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/audit?entityType=PATROL&entityId={{patrol_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "audit"
+              ],
+              "query": [
+                {
+                  "key": "entityType",
+                  "value": "PATROL"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{patrol_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Bandobast (501 Stub)",
+      "item": [
+        {
+          "name": "Create Bandobast (501 Expected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 501 Not Implemented', function () { pm.response.to.have.status(501); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{planner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"VIP Route Security\",\n  \"kind\": \"BANDOBAST\",\n  \"stationId\": 1,\n  \"startsAt\": \"2026-11-15T06:00:00Z\",\n  \"endsAt\": \"2026-11-15T18:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bandobast",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bandobast"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Officer Check-In (501 Expected)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 501 Not Implemented', function () { pm.response.to.have.status(501); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{officer_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lat\": 28.6139,\n  \"lng\": 77.2090\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bandobast/1/points/1/checkin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bandobast",
+                "1",
+                "points",
+                "1",
+                "checkin"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: copmap
+      POSTGRES_USER: copmap
+      POSTGRES_PASSWORD: copmap
+    ports: ["5433:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U copmap"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports: ["6380:6379"]
+
+  app:
+    build: .
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://postgres:5432/copmap
+      DB_USER: copmap
+      DB_PASS: copmap
+      REDIS_HOST: redis
+      JWT_SECRET: change-me-to-a-long-random-string-for-copmap-demo-2026
+    ports: ["8080:8080"]

@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: copmap-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/copmap}
+    username: ${DB_USER:copmap}
+    password: ${DB_PASS:copmap}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.jdbc.batch_size: 50
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-to-a-long-random-string-at-least-32-chars}
+    access-ttl-minutes: 15
+  tracking:
+    max-pings-per-minute: 30
+    no-signal-minutes: 3
+  alerts:
+    dedupe-ttl-minutes: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
